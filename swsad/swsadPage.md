@@ -1,3 +1,4 @@
 # SWSAD Software System Analysis and Design
 ## Homework
-  - [first](/swsad/fistHomework.md)
+  - [first](/swsad/first/firstHomework.md)
+  - [second](/swsad/second/secondHomework.md)
