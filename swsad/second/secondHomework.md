@@ -59,9 +59,9 @@
         每个人的任务是1-2项
         至少包含一个团队活动任务
 
-        ![image text](./pic.png)
+        ![image text](pic.png)
 
     UML绘图工具练习（提交贴图，必须使用 UMLet）
         请在 参考书2 或 教材 中选择一个类图（给出参考书页码图号）
-        ![image text](./unl.png)
+        ![image text](uml.png)
         教材 13页 图1-6
