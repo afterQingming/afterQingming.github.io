@@ -1,7 +1,8 @@
 # SWSAD Software System Analysis and Design
 ## Homework
-  - [first](/swsad/first/firstHomework)
-  - [second](/swsad/second/secondHomework)
-  - [third](/swsad/third/thirdHomework)
-  - [fourth](/swsad/fourth/fourthHomework)
-  - [fifth](/swsad/fifth/fifthHomework)
+  - [first](./first/firstHomework)
+  - [second](./second/secondHomework)
+  - [third](./third/thirdHomework)
+  - [fourth](./fourth/fourthHomework)
+  - [fifth](./fifth/fifthHomework)
+  - [sixth](./sixth/sixthHomework)
