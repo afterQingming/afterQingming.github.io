@@ -203,3 +203,126 @@ PERMANENT_SESSION_LIFETIME = 3600   #session长期有效，则设定session生�
 
 ![img](./blog.png)
 ![img](./blog3.png)
+
+### networks 详细配置
+
+networks通常应用于集群服务，从而使得不同的应用程序得以在相同的网络中运行，从而解决容器间网络隔离问题。
+
+一般对于集群服务，常常通过docker-compose.yml文档快速编排、部署应用服务。官网中给出了如下的使用场景和方式：
+
+1. 未显式声明网络环境的docker-compose.yml
+
+例如，在目录app下创建docker-compose.yml，内容如下：
+
+version: '3'
+services:
+ web:
+  mage: nginx:latest
+  container_name: web
+  depends_on:
+   - db
+  ports:
+   - "9090:80"
+  links:
+   - db
+ db:
+  image: mysql
+  container_name: db
+
+使用docker-compose up启动容器后，这些容器都会被加入app_default网络中。使用docker network ls可以查看网络列表，docker network inspect <container id>可以查看对应网络的配置。
+```
+$ docker net work ls
+NETWORK ID     NAME           DRIVER       SCOPE
+6f5d9bc0b0a0    app_default       bridge       local
+0fb4027b4f6d    bridge          bridge       local
+567f333b9de8    docker-compose_default  bridge       local
+bb346324162a    host           host        local
+a4de711f6915    mysql_app        bridge       local
+f6c79184ed27    mysql_default      bridge       local
+6358d9d60e8a    none           null        local
+```
+2. networks关键字指定自定义网络
+
+例如下面的docker-compose.yml文件，定义了front和back网络，实现了网络隔离。其中proxy和db之间只能通过app来实现通信。其中，custom-driver-1并不能直接使用，你应该替换为host, bridge, overlay等选项中的一种。
+
+```
+version: '3'
+
+services:
+ proxy:
+  build: ./proxy
+  networks:
+   - front
+ app:
+  build: ./app
+  networks:
+   - front
+   - back
+ db:
+  image: postgres
+  networks:
+   - back
+
+networks:
+ front:
+  # Use a custom driver
+  driver: custom-driver-1
+ back:
+  # Use a custom driver which takes special options
+  driver: custom-driver-2
+  driver_opts:
+   foo: "1"
+   bar: "2"
+```
+
+
+3. 配置默认网络
+
+```
+version: '2'
+
+services:
+ web:
+  build: .
+  ports:
+   - "8000:8000"
+ db:
+  image: postgres
+
+networks:
+ default:
+  # Use a custom driver
+  driver: custom-driver
+```
+4. 使用已存在的网络
+```
+networks:
+ default:
+  external:
+   name: my-pre-existing-network
+```
+5. 使用aliases代替link
+
+一般的使用格式如下：
+```
+services:
+ some-service:
+  networks:
+   some-network:
+    aliases:
+     - alias1
+     - alias3
+   other-network:
+    aliases:
+     - alias
+```
+
+参考链接
+
+[https://blog.csdn.net/Kiloveyousmile/article/details/79830810](https://blog.csdn.net/Kiloveyousmile/article/details/79830810)
+
+[https://blog.51cto.com/4925054/2342021](https://blog.51cto.com/4925054/2342021)
+
+[https://www.longjj.com/2018/04/03/Docker-%E6%9E%84%E5%BB%BA%E9%95%9C%E5%83%8F%E5%85%A5%E9%97%A8%EF%BC%8C%E4%BB%A5-Python-Flask-%E4%B8%BA%E4%BE%8B/](https://www.longjj.com/2018/04/03/Docker-%E6%9E%84%E5%BB%BA%E9%95%9C%E5%83%8F%E5%85%A5%E9%97%A8%EF%BC%8C%E4%BB%A5-Python-Flask-%E4%B8%BA%E4%BE%8B/)
+
+[https://www.zybuluo.com/longj/note/1173047](https://www.zybuluo.com/longj/note/1173047)
